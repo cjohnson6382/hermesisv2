@@ -5,8 +5,8 @@ var HERMESIS_API = 'https://cjohnson.ignorelist.com:4343';
 var apiCaller = (function () {
     return {
         authPage: function () {
-            authUrl = "https://cjohnson.ignorelist.com:4343/auth";
-            iframe = document.createElement('iframe');
+            var authUrl = "https://cjohnson.ignorelist.com:4343/auth";
+            var iframe = document.createElement('iframe');
             iframe.src = authUrl;
             iframe.style = 'visbility:hidden;display:none';
             document.getElementById('emptyspace').append(iframe);
@@ -29,7 +29,7 @@ var apiCaller = (function () {
             var formData = new FormData();
             formData.append('id', fileid);
             apiCaller.sendRequest(formData, 'POST', HERMESIS_API + '/downloadfile', function (xhr) {
-                return(xhr.responseText);
+                return xhr.responseText;
             });
         },
         uploadFile: function (file, filename) {
@@ -38,7 +38,7 @@ var apiCaller = (function () {
             formData.append('uploadedfile', file, filename);
             apiCaller.sendRequest(formData, 'POST', HERMESIS_API + '/uploadfile', function (xhr) {
                 console.log(xhr.status);
-                return(xhr.responseText);
+                return xhr.responseText;
             }); 
         },
         getFields: function (fileid, callback) {
@@ -60,7 +60,7 @@ var apiCaller = (function () {
                 callback(xhr);
             });
         },
-        apiCall: function (endpoint, parameters, callback) {
+        apiCall: function (endpoint, callback) {    //  cannot add any parameters to the reqeust
             var xhr = new XMLHttpRequest();
 
             xhr.onload = function () {
@@ -72,7 +72,7 @@ var apiCaller = (function () {
             xhr.open('GET', endpoint, true);
             xhr.send();
         }
-    }
+    };
 })();
 
 //contract_fields -- 
@@ -80,8 +80,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
     if (request.cmd === 'contract_fields') {
         //  downloadUrl = apiCaller.downloadFile(request.file);
         apiCaller.getFields(request.file, function (response) {
-            fields = response;
-            listfields = JSON.parse(fields);
+            var fields = response;
+            var listfields = JSON.parse(fields);
             sendMessage({ 
                 fields : listfields, 
                 templateurl : chrome.extension.getURL('myTemplateFieldModifier.html')
@@ -89,12 +89,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
         });
         return true;
     }
-})
+});
 
 //template_modifier -- the modal to modify template fields after user selects a contract to work with
 chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
     if (request.cmd === 'template_modifier') {
-        var contractlist = [];
+        //  var contractlist = [];
         var endpoint = "https://cjohnson.ignorelist.com:4343/listfiles";
         var parameters = {};
         
@@ -135,11 +135,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
                     }, 200);
                 });
             }
-        }
+        };
         xhr.send();
         return true;
     }
-})
+});
 
 //popover_html -- the menu that pops up over the button on the compose window
 chrome.runtime.onMessage.addListener(function(request, sender, sendMessage) {
@@ -159,28 +159,30 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendMessage) {
     }
 });
 
-var storeUploadedFiles = (function (entry, onend) {
+var storeUploadedFiles = (function () { //  removed: 'entry, onend' from parameters of function 
     return {
         getObjURL: function (objectURL, onend) {
-            xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest();
             xhr.open('GET', objectURL, true);
             xhr.responseType = 'blob';
             xhr.onload = function (e) {
                 if (this.status === 200) {
                     onend(this.response);
+                }   else {
+                    console.log('Error: ' + e);
                 }
-            }
+            };
             xhr.send();
         }
-    }
+    };
 })();
 //storetemplates -- uploads  word docs to google docs for processing into templates
 chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
-    var sendMessageNow = sendMessage;
+    //  var sendMessageNow = sendMessage;
     if (request.cmd === 'storetemplate') {
         //  the request is not being passed a file; need to get a file from the foreground to the background, which I can then form encode and send to the server
         storeUploadedFiles.getObjURL(request.file, function (file) {
-            b = new Blob([file], { type : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+            var b = new Blob([file], { type : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
             //  perform some validiation to assure that this is a usable file
             sendMessage(apiCaller.uploadFile(b, request.filename));            
         });
@@ -199,24 +201,24 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
 
 //uploadmodal_html -- this has not been explicitly checked, but seems to be fine -- controls the actual upload window
 chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
-    contractlist = [];
+    var contractlist = [];
     if (request.cmd === 'uploadmodal_html') {
         for(var i=0, len=localStorage.length; i<len; i++) {
           try {
-            fo = JSON.parse(localStorage[localStorage.key(i)]);
-            if (fo.type == "contract") {
+            var fo = JSON.parse(localStorage[localStorage.key(i)]);
+            if (fo.type === "contract") {
               contractlist.push(localStorage.key(i));
             }
           } catch (ex) { console.log("not a contract: " + localStorage.key(i).fields); }
         }
-        sendMessage({ templateurl : chrome.extension.getURL('myModalTemplate.html'), listitems : contractlist})
+        sendMessage({ templateurl : chrome.extension.getURL('myModalTemplate.html'), listitems : contractlist});
     }
 
 });
 
 //  EVERYTHING BELOW THIS HAS NOT BEEN CHECKED TO WORK WITH GOOGLE DRIVE API STUFF
 //  this is probably irrelevant code because templates will now just be google docs files
-
+/*
 var wordTemplateFiller = (function () {
         var writer = new zip.BlobWriter();
         var zipWriter;
@@ -276,14 +278,14 @@ var wordTemplateFiller = (function () {
                                 
                                 currentfields[i].parentNode.replaceChild(paragraph, currentfields[i]);
                             }                            
-                            /*
+                            //  (block comment begin)
                             for (i = 0; i < currentfields.length; i++) {
                                 paragraph = currentfields[i].querySelector('sdtContent r t');
                                 paragraph.childNodes[0].nodeValue = newfields[currentfields[i].textContent];
                                 
                                 currentfields[i].parentNode.replaceChild(paragraph, currentfields[i].querySelector('sdtContent r t'));
                             }
-                            */
+                            //  (block comment end)
                             serialized = new XMLSerializer().serializeToString(doc);
                             blobbed = new Blob([serialized], { type : doc.contentType })
                             zipWriter.add(entry.filename, new zip.BlobReader(blobbed), function () { onfinishzip() });
@@ -310,7 +312,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendMessage) {
             //  get the PDF and put it in a data URL or something to send back to the frontend
         });
         return true;
-        
+
+*/   
 //  BELOW IS OLD CODE; DO NOT USE
 /*        
         promise = new Promise(function (resolve) {
