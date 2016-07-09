@@ -1,0 +1,122 @@
+.add-window {
+  min-width: 350px;
+  position: fixed;
+  bottom: 0px;
+  right: 10px;
+  border: 1px solid black;
+  background-color: white;
+  z-index: 2;
+}
+
+.add-window .header {
+  background-color: #333;
+  color: white;
+}
+
+.add-window div {
+  padding: 5px 20px;
+}
+
+.subject {
+  margin: 10px 0;
+}
+
+label {
+  display: inline-block;
+  width: 100px;
+  text-align: right;
+  vertical-align: top;
+}
+
+.button-bar {
+  text-align: right;
+}
+
+input[type=text] {
+  width: 200px;
+}
+
+textarea {
+  width: 200px;
+  height: 100px;
+}
+
+/*   templatefieldmodifier   */
+#modifiablefields input {
+   text-align: center;
+}
+
+.fieldcontainer {
+    border: 1px solid grey;
+}
+
+.contractfields {
+    color: grey;
+}
+
+/*   modaltemplate   */
+.emptybox {
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    border: 1px dashed grey;
+    font-size: 200%;
+    font-weight: bold;
+}
+
+.greytext {
+    color: grey;
+}
+
+/*  typeahead   */
+.popaheadbox {
+    width: 250px;
+    height: 100px;
+}
+
+/*  various */
+.centermass {
+    border: 5px solid white;
+}
+
+.hcenter {
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.lefttab {
+    border-left: 10px solid white;
+}
+
+.centerbutton {
+    word-spacing: 3px;
+    vertical-align : middle;
+    height: 50%;
+    width: 100%;
+    margin: 0 auto;
+    border-top: 5px;
+    border-right: 5px;
+    border-left: 5px;
+}
+
+.titlebar {
+    font-size: 125%;
+    color: grey;
+    position: absolute;
+    margin: 0;
+    top: 0%;
+    font-weight: bold;
+}
+
+.footerbar {
+    margin: 0;
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    margin-right: -100%;
+    transform: translate(-100%, -100%);
+}

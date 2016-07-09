@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+
+  "name": "Gmail Integration",
+  "description": "This extension creates a button on gmail that says compose contract",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "hermesis.ico"
+  },
+  "background" : {
+    "scripts": ["/lib/client.js", "background.js"],
+	"persistent": false
+  },
+  "permissions": [ "activeTab", "tabs", "https://cjohnson.ignorelist.com:4343/*"],
+  "content_scripts": [
+	{
+		"matches":	["http://gmail.google.com/*", "https://gmail.google.com/*", "http://mail.google.com/*", "https://mail.google.com/*"],
+		"js":		[
+                        "/lib/angular.min.js",
+                        "/lib/angular-animate.js",
+                        "/lib/ui-bootstrap-tpls-0.14.3.min.js",
+                        "/lib/inboxsdk.js",
+                        "inject_test.js"
+                    ],
+		"css":		["/css/compose.css", "/lib/bootstrap.min.css"],
+		"all_frames":	true,
+		"run_at":	"document_end"
+	}
+  ],
+  "content_security_policy": "script-src 'self' http://mail.google.com https://apis.google.com 'unsafe-eval'; object-src 'self'",
+  "offline_enabled": false,
+  "web_accessible_resources": [
+      "/html/myPopoverTemplate.html",
+      "/html/myTypeaheadPopupTemplate.html",
+      "/html/myModalTemplate.html",
+      "/html/button.html",
+      "/html/myTemplateFieldModifier.html",
+      "/resources/hermesis.ico",
+      "/html/deleterTemplate.html"
+  ]
+}
