@@ -1,5 +1,6 @@
 angular.module('myApp').controller('myModalInstanceCtrl', function ($scope, $uibModalInstance) {
 	$scope.done = function () {
+        //  no DOM manipulation in controllers!!!!!
         var evt = document.createEvent('HTMLEvents');
         evt.initEvent('drop', false, true);
         document.dispatchEvent(evt);

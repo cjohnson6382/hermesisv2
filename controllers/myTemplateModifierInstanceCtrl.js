@@ -1,16 +1,11 @@
 angular.module('myApp').controller('myTemplateModifierInstanceCtrl', function ($scope, $uibModalInstance, templatefields, contract) {
     $scope.fieldList = templatefields;
-    $scope.delete = function () {
-        chrome.extension.sendMessage({cmd : 'delete_contract', contractname : contract}, function (response) {
-            console.log(response);
-            $uibModalInstance.dismiss('cancel');
-        });
-    };
-
     $scope.done = function () {
         
         //  needs to be: var newfields = {oldfield: newfield, oldfield: newfield};
         var newfields = {};
+
+        //  no document.querySelector: use one-way binds instead *************
         for (i = 0; i < $scope.fieldList.length; i++) {
             newfields[$scope.fieldList[i]] = document.querySelector('#' + $scope.fieldList[i]).value;
         }
@@ -19,6 +14,8 @@ angular.module('myApp').controller('myTemplateModifierInstanceCtrl', function ($
 
         chrome.extension.sendMessage({ cmd : "fillintemplate", template : contract, userfields: newfields }, function (res) {
             var response = res;
+
+            //  this is a general purpose function and should go into a util file ****************
             function dataURLtoBlob(dataurl, onend) {
                 var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
                     bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -32,6 +29,7 @@ angular.module('myApp').controller('myTemplateModifierInstanceCtrl', function ($
                 blob.lastModifiedDate = new Date();
                 blob.name = response.filename;
 
+                //  why are these things here? I can presumably set them anywhere; they should be somewhere my global and more obvious ***************
                 InboxComposeView.on('destroy', function (event) {
                     console.log('attached files has been destroyed', event);
                 });
@@ -39,6 +37,7 @@ angular.module('myApp').controller('myTemplateModifierInstanceCtrl', function ($
                 //  blob.name = response.filename;
                 InboxComposeView.attachFiles([blob]);
             });
+            //  can probably put the attach in the close here? or make the close.then() into the attach, to keep the InboxCompose stuff out of the controllers
             $uibModalInstance.close('closing the modal after attaching a file');
         });
     };
