@@ -1,6 +1,0 @@
-<a tabindex = "-1">
-    <span>{{ match.label }}</span>
-    <!--    <span ng-click="delete('{{ match.label }}')"> |x|</span>    -->
-    <span ng-click="delete('{{ match.label }}')">|x|</span>
-    <span onclick="alert('blablahblah')">!!!!!</span>
-</a>

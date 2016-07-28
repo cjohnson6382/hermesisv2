@@ -1,0 +1,6 @@
+<!doctype html>
+<div class="form-group centermass" id="popover">
+  <div class='centerbutton'>
+    <input type="text" ng-model="selected" typeahead-on-select="openTemplate($item, $model, $label)" uib-typeahead="contract.name for contract in contracts | filter:$viewValue | limitTo:10" placeholder="Contract Name">
+  </div>
+</div>

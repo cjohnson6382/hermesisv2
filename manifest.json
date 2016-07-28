@@ -1,41 +1,53 @@
 {
   "manifest_version": 2,
 
-  "name": "Gmail Integration",
-  "description": "This extension creates a button on gmail that says compose contract",
-  "version": "1.0",
+  "name": "Derp Derp Derp",
+  "description": "This extension does nothing",
+  "version": "1.2",
   "browser_action": {
-    "default_icon": "hermesis.ico"
+    "default_icon": "resources/hermesis.ico"
   },
   "background" : {
-    "scripts": ["/lib/client.js", "background.js"],
-	"persistent": false
+    "scripts": [
+      "background/background.js",
+      "lib/jquery-3.1.0.min.js"
+    ],
+	  "persistent": false
   },
-  "permissions": [ "activeTab", "tabs", "https://cjohnson.ignorelist.com:4343/*"],
-  "content_scripts": [
-	{
-		"matches":	["http://gmail.google.com/*", "https://gmail.google.com/*", "http://mail.google.com/*", "https://mail.google.com/*"],
-		"js":		[
-                        "/lib/angular.min.js",
-                        "/lib/angular-animate.js",
-                        "/lib/ui-bootstrap-tpls-0.14.3.min.js",
-                        "/lib/inboxsdk.js",
-                        "inject_test.js"
-                    ],
-		"css":		["/css/compose.css", "/lib/bootstrap.min.css"],
-		"all_frames":	true,
-		"run_at":	"document_end"
-	}
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "https://cjohnson.ignorelist.com:4343/*"
   ],
-  "content_security_policy": "script-src 'self' http://mail.google.com https://apis.google.com 'unsafe-eval'; object-src 'self'",
+  "content_scripts": [
+	  {
+  		"matches":	[
+  		  "https://gmail.google.com/*",
+  		  "https://mail.google.com/*"
+		  ],
+  		"js":	[
+        "lib/angular.min.js",
+        "lib/ui-bootstrap-tpls-0.14.3.min.js",
+        "lib/jquery-3.1.0.min.js",
+        "lib/inboxsdk.js",
+        "lib/angular-animate.js",
+        "extension.js"
+      ],
+  		"css":  [
+  		  "/css/compose.css",
+  		  "/lib/bootstrap.min.css"
+		  ],
+  		"run_at":	"document_end"
+	  }
+  ],
+  "content_security_policy": "script-src 'self' https://apis.google.com 'unsafe-eval'; object-src 'self'",
   "offline_enabled": false,
   "web_accessible_resources": [
-      "/html/myPopoverTemplate.html",
-      "/html/myTypeaheadPopupTemplate.html",
-      "/html/myModalTemplate.html",
-      "/html/button.html",
-      "/html/myTemplateFieldModifier.html",
-      "/resources/hermesis.ico",
-      "/html/deleterTemplate.html"
+    "resources/*.ico",
+    "controllers/*.js",
+    "services/*.js",
+    "directives/*.js",
+    "html/*.html",
+    "lib/*.map"
   ]
 }

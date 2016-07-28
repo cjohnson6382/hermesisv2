@@ -6,7 +6,12 @@
             <div id='modifiablefields'>
                 <table style="width:100%">
                     <tr class="contractfields" ng-repeat="field in fieldList">
-                        <td class="centermass"><input class="fieldcontainer" name='userfield' id='{{ field }}' placeholder="field: {{ field }}" type='text'></td>
+                        <td class="centermass">
+                          <input
+                            class="fieldcontainer"
+                            name='userfield'
+                            placeholder="field: {{ field }}"
+                            type='text'>{{ templatefields[field] }}</td>
                     </tr>
                 </table>
             </div>
@@ -14,9 +19,8 @@
 	</form>
 	<div class="modal-footer">
         <div class="footerbar">
-            <button class="T-I J-J5-Ji aoO T-I-atl L3 T-I-Zf-aw2" type="button" ng-click="delete()">Delete from App</button>
             <button class="T-I J-J5-Ji aoO T-I-atl L3 T-I-Zf-aw2" type="button" ng-click="cancel()">Cancel</button>
-            <button class="T-I J-J5-Ji aoO T-I-atl L3 T-I-Zf-aw2" type="button" ng-click="done()">Done</button>        
+            <button class="T-I J-J5-Ji aoO T-I-atl L3 T-I-Zf-aw2" type="button" ng-click="done()">Done</button>
         </div>
 	</div>
 </div>
