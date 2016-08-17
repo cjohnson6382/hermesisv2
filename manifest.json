@@ -1,0 +1,53 @@
+{
+  "manifest_version": 2,
+
+  "name": "Derp Derp Derp",
+  "description": "This extension does nothing",
+  "version": "1.2",
+  "browser_action": {
+    "default_icon": "resources/hermesis.ico"
+  },
+  "background" : {
+    "scripts": [
+      "background/background.js",
+      "lib/jquery-3.1.0.min.js"
+    ],
+	  "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "https://cjohnson.ignorelist.com:4343/*"
+  ],
+  "content_scripts": [
+	  {
+  		"matches":	[
+  		  "https://gmail.google.com/*",
+  		  "https://mail.google.com/*"
+		  ],
+  		"js":	[
+        "lib/angular.min.js",
+        "lib/ui-bootstrap-tpls-0.14.3.min.js",
+        "lib/jquery-3.1.0.min.js",
+        "lib/inboxsdk.js",
+        "lib/angular-animate.js",
+        "extension.js"
+      ],
+  		"css":  [
+  		  "/css/compose.css",
+  		  "/lib/bootstrap.min.css"
+		  ],
+  		"run_at":	"document_end"
+	  }
+  ],
+  "content_security_policy": "script-src 'self' https://apis.google.com 'unsafe-eval'; object-src 'self'",
+  "offline_enabled": false,
+  "web_accessible_resources": [
+    "resources/*.ico",
+    "controllers/*.js",
+    "services/*.js",
+    "directives/*.js",
+    "html/*.html",
+    "lib/*.map"
+  ]
+}
