@@ -1,18 +1,17 @@
 class ViewStore {
-  constructor () {
-    var idCounter = 0;
-    var viewTable = {};
-  }
-  
-  newId () {
-    return idCounter++;
-  }
-  
-  setView (id, composeView) {
-    viewTable[id] = composeView;
+  static setView (composeView) {
+    const id = ViewStore.COUNTER++;
+    ViewStore.TABLE[id] = composeView;
     return id;
   }
+  
+  static getView (id) {
+    return ViewStore.TABLE.id;
+  }
 }
+
+ViewStore.TABLE = {};
+ViewStore.COUNTER = 0;
 
 var dataURLtoBlob = function (fileresource, mimeType, callback) {
   var arr = fileresource.file.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -31,23 +30,31 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
   .controller('mainCtrl', [function () {
     //  $scope.contracts = chrome.extensions.sendMessage({cmd: 'getcontractnames'});
   }])
-  .controller('myTemplateModifierInstanceCtrl', function ($scope, $uibModalInstance, templatefields, contract, composeview) {
-    $scope.fieldList = Object.keys(templatefields);
-    $scope.templatefields = templatefields;
-  
+  .controller('templateModifier', function ($scope, $uibModalInstance, item, composeviewid) {
+    //  $scope.fieldList = Object.keys(templateproperties);
+    
+    var fields = Object.keys(item.properties).filter(function (prop) { return prop.includes('field') });
+    var fieldJSON = fields.reduce(function (total, current) { return total + item.properties[current] }, '');
+    var fieldsArray = JSON.parse(fieldJSON);
+    
+    $scope.fieldList = fieldsArray;
+    $scope.templatefields = {};
+    fieldsArray.map(function (current) { $scope.templatefields[current] = '' });
+    
     $scope.done = function () {
   
       //
-      console.log("templatefields: ", templatefields);
+      console.log("templatefields: ", $scope.templatefields);
       //
       
       chrome.extension.sendMessage({
         cmd : "fillintemplate",
-        template: contract,
-        fields: $scope.templatefields
+        template: item.id,
+        fields: $scope.templatefields,
+        name: item.name
       }, function (resp) {
         dataURLtoBlob(resp, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', function (blob) {
-          ViewStore[composeView].attachFiles([blob]);
+          ViewStore.getView(composeviewid).attachFiles([blob]);
           $uibModalInstance.close('closing the modal after attaching a file');
         });
       });
@@ -56,7 +63,6 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
     $scope.cancel = function () { $uibModalInstance.dismiss('cancel') };
   })
   .directive('popover', ['$uibModal', '$sce', 'ContractsService', function ($uibModal, $sce, ContractsService) {
-    console.log('in popover directive');
     return {
       restrict: 'E',
       scope: {composeView: '='},
@@ -64,21 +70,23 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
       compile: function ($element, $attrs) {
         return function ($scope, $element, $attrs) {
           ContractsService.get().then(function (resp) {
+            console.log('in popover directive, after calling ContractService.get() to populate $scope.contracts: ', resp);
             $scope.contracts = resp;
           });
   
           $scope.selected = '';
-          
           $scope.openTemplate = function ($item, $model, $label) {
+            
+            console.log('popover directive, $scope.openTemplate, $item: ', $item);
+            
             var modalInstance = $uibModal.open({
-              templateUrl: 'html/templateModifier.html',
+              templateUrl: $sce.trustAsResourceUrl(chrome.extension.getURL('html/templateModifier.html')),
               controller: 'templateModifier',
               windowClass: 'app-modal-window',
               keyword: true,
               resolve: {
-                templatefields: function () {return $item.fields},
-                contract: function () {return $item.name},
-                composeview: function () {return $scope.composeView}
+                item: function () {return $item},
+                composeviewid: function () {return $scope.composeView}
               }
             });
           };
@@ -90,22 +98,25 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
   .factory('ContractsService', ['$q', function ($q) {
     var fetchContracts = function (callback) {
       chrome.extension.sendMessage({cmd: 'fetchcontracts'}, function (resp) {
+        
+        
+        console.log('fetchContracts returns: ', resp);
+        
+        
         callback(resp);
       });
     };
     
     var contracts;
-    fetchContracts(function (resp) {
-      contracts = resp;
-    });
-    
+
     return {
-      //  returns a promise!
       get: function () {
         var deferred = $q.defer();
         fetchContracts(function (resp) {
-          deferred.resolve(resp);
+            console.log('ContractService#get; just before promise resolves:  ', resp);
+            deferred.resolve(resp);
         });
+
         return deferred.promise;
       },
       update: function () {
@@ -131,17 +142,15 @@ InboxSDK.load('1.0', 'sdk_APPLEFAPPLE_98d35548c0')
         iconUrl: chrome.extension.getURL('resources/hermesis.ico'),
         type: 'MODIFIER',
         onClick: function (evt) {
-          chrome.extension.sendMessage({cmd: 'auth'}, function (resp) {
-            evt.dropdown.setPlacementOptions({
-              position: "top",
-              hAlign: "left",
-            });
-            evt.dropdown.el.innerHTML = '<popover compose-view=' + ViewStore(ViewStore.newId, composeView) + '></popover>';
+          evt.dropdown.setPlacementOptions({
+            position: "top",
+            hAlign: "left",
+          });
+          evt.dropdown.el.innerHTML = '<popover compose-view=' + ViewStore.setView(composeView) + '></popover>';
 
-            angular.element(document.body).injector().invoke(function ($compile) {
-              var scope = angular.element($('popover')).scope();
-              $compile($('popover'))(scope);
-            });
+          angular.element(document.body).injector().invoke(function ($compile) {
+            var scope = angular.element($('popover')).scope();
+            $compile($('popover'))(scope);
           });
         }
       });

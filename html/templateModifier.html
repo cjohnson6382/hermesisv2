@@ -11,7 +11,8 @@
                             class="fieldcontainer"
                             name='userfield'
                             placeholder="field: {{ field }}"
-                            type='text'>{{ templatefields[field] }}</td>
+                            ng-model="templatefields[field]"
+                            type='text'></td>
                     </tr>
                 </table>
             </div>
