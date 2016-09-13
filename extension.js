@@ -53,6 +53,9 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
         fields: $scope.templatefields,
         name: item.name
       }, function (resp) {
+          
+        console.log('templatemodifier after background call: ', resp);
+          
         dataURLtoBlob(resp, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', function (blob) {
           ViewStore.getView(composeviewid).attachFiles([blob]);
           $uibModalInstance.close('closing the modal after attaching a file');
