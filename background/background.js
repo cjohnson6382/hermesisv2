@@ -69,6 +69,7 @@ var requester = {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   requester[request.cmd](request)
     .then(function (resp) {
+      console.log('response to requester: ', resp);
       sendResponse(resp);
     });
 
