@@ -9,7 +9,8 @@ var getRequest = function (options) {
       data: options.data
     })
       .then(function (resp) {
-        resolve(resp.type === 'auth' ? auth(resp.resp, options.func, options.args) : resp.resp);
+        console.log(resp);
+        resolve(resp.type === 'auth' ? auth(resp.resp, options.func, options.args) : resp);
       });
   });
 
@@ -55,9 +56,6 @@ var requester = {
     return getRequest({ url: url, func: func, args: args, method: method });
   },
   fillintemplate: function (request) {
-    
-    console.log('fields (should be an object with keys (fieldnames) and values (replacement text)): ', request.fields);
-    
     var func = arguments.callee;
     var args = arguments;
     var url = HERMESIS_API + "/getfilledtemplate";
