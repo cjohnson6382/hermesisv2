@@ -76,7 +76,6 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
         fields: $scope.templatefields,
         name: item.name
       }, function (resp) {
-<<<<<<< HEAD
         $scope.progressbar = '';
         
         var deferred = new Promise(function (resolve, reject) {
@@ -104,13 +103,6 @@ angular.module('myApp', ['ngAnimate', 'ui.bootstrap'])
           //  console.log('blob before attaching: ', blob);
           //  ViewStore.getView(composeviewid).insertTextIntoBodyAtCursor(resp);
           ViewStore.getView(composeviewid).attachFiles([file]);
-=======
-          
-        console.log('templatemodifier after background call: ', resp);
-          
-        dataURLtoBlob(resp, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', function (blob) {
-          ViewStore.getView(composeviewid).attachFiles([blob]);
->>>>>>> 2adf4219f312a96b350869196a42b922c5314cae
           $uibModalInstance.close('closing the modal after attaching a file');
         });
       });
